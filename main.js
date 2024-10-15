@@ -1,44 +1,68 @@
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 $(document).ready(function() {
-  
-  $("#btnSubmit").hover(
-      function() { 
-          $(this).css({"color": "red", "font-weight": "bold"});
-      },
-      function() { 
-          $(this).css({"color": "", "font-weight": ""}); 
-      }
+  // Hover effect for Submit button
+  $('#btnSubmit').hover(
+    function() {
+      $(this).css({
+        'color': 'red',
+        'font-weight': 'bold'
+      });
+    }, 
+    function() {
+      $(this).css({
+        'color': '',
+        'font-weight': ''
+      });
+    }
   );
 
-  
-  $("#supportForm").submit(function(event) {
-      event.preventDefault(); 
-      
-      
-      let isValid = formValidate();
-      
-      if (isValid) {
-          
-          let formData = {
-              reqDate: $("#reqDate").val(),
-              empID: $("#empID").val(),
-              fName: $("#fName").val(),
-              lName: $("#lName").val(),
-              probDesc: $("#probDesc").val()
-          
-          };
-          console.log("Form submitted with data: ", formData); // Replace with actual AJAX request
+  // Submit button click event handler
+  $('#btnSubmit').on('click', function(event) {
+    // Call form validation function (assumed to be defined elsewhere)
+    if (formValidate()) {
+      // Add timestamp
+      let timestamp = new Date().toLocaleString();
+      $('#message').text('Form submitted at: ' + timestamp);
 
-          // Create timestamp
-          let timestamp = new Date().toLocaleString();
-          $("#timestamp").text("Form submitted on: " + timestamp);
-          
-          // Detect which element triggered the event and dim it
-          $(event.target).css("opacity", "0.5"); // Dim the submit button
-      } else {
-          // Display error message and clear form fields
-          $("#errorMessage").text("Form validation failed. Please try again.").show();
-          $("#reqDate, #empID, #fName, #lName, #probDesc").val(''); 
-      }
+      // Send form data to server (replace URL with actual server endpoint)
+      // Example using jQuery AJAX
+      let formData = {
+        ReqDate: $('#reqDate').val(),
+        EmpID: $('#empID').val(),
+        FName: $('#fName').val(),
+        LName: $('#lName').val(),
+        ProbDesc: $('#probDesc').val()
+      };
+
+      $.ajax({
+        url: 'https://your-server-endpoint.com/submit',
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+          alert('Form submitted successfully!');
+        },
+        error: function() {
+          alert('Error submitting the form.');
+        }
+      });
+    } else {
+      // Issue an error message and clear form fields
+      $('#message').text('Form validation failed. Please check your inputs.');
+      $('#supportTicketForm').trigger('reset');
+    }
+
+    // Determine which DOM element triggered the event and dim it
+    $(event.target).css('opacity', '0.5');
   });
 });
+
+// Placeholder for the formValidate function
+function formValidate() {
+  // Placeholder logic, replace with actual validation
+  // Return true if the form is valid, false otherwise
+  let isValid = true;  // Assume validation passes for now
+  // Add your validation logic here...
+  
+  return isValid;
+}
